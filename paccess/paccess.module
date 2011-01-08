@@ -1,0 +1,34 @@
+<?php
+// $Id $
+
+/**
+ * @file
+ *  paccess.module 
+ */
+
+/**
+ * Implementation of hook_menu().
+ */
+function paccess_menu() {
+  $items = array();
+
+  $items['admin/settings/paccess'] = array(
+    'title' => t('Extra Features'), 
+    'description' => t('Show/Hide features to users without "administer features" permissions'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('paccess_admin_settings'),
+    'access arguments' => array('administer feature access'), 
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'paccess.admin.inc', 
+  );
+
+  return $items;
+}
+
+/**
+ * Implementation of hook_form_alter().
+ */
+function paccess_form_alter(&$form, $form_state, $form_id) {
+// TODO Handle feature sets like this. paccess module (p for packages).
+//unset($form['agenda']);
+}
