@@ -25,55 +25,29 @@ function faccess_menu() {
   return $items;
 }
 
+// TODO Handle feature sets like this. paccess module (p for packages).
+//unset($form['agenda']);
+
 /**
- * Implementation of hook_formalter().
+ * Implementation of hook_form_alter().
  */
 function faccess_form_alter(&$form, $form_state, $form_id) {
-  // Alter Features form
-// dsm($form_id);
   if ($form_id == 'features_admin_form') {
-    // Each feature module has a group (e.g. features).
-    // Under that group, each module is represented under
-    // $form['group']['status']
-    // $form['group']['sign']
-    // $form['group']['state']
-    // $form['group']['actions']
-    //
-    // I assume they could have items here too, these must
-    // be optional: 
-    // $form['group']['action']
-    // $form['group']['weight']
-    // $form['group']['links']
-
-/****
-Roadmap: 
-featuresets module:
-- featuresets module should let users define "groups"
-- featuresets module should let users associate features 
-  modules with designated groups
-- featuresets module: Reorganize features into featuresets
-
-instructions module: 
-- add a tab for Instructions on admin/build/features
-  next to Create and Manage
-- Use theme('features_form') to put instructions in 
-  familiar interface
-- Provide instructions for enabled modules
-
-skin module: 
-- add a tab for Skin on admin/build/features
-- form alter this, replacement for bloated subtheme form
-- skin admin GUI for adding elements to skin page then exporting w/ Create Features
-
-TBD
-- mechanism for hiding feature modules from ___ users under ___ 
-  conditions
-//**/
-
-//dsm('faccess runs here');
-//dsm($form, 'form');
-    $form['features']['status']['ax2'] = $form['ax']['status']['ax2'];
-    unset($form['ax']['status']['ax2']);
-//dsm($form['#features']);
+    // Figure out which features have restricted access. 
+    $features = features_get_features();
+    foreach($features as $feature) {
+      $var = 'faccess_'. $feature->name;
+      $restricted = variable_get($var, FALSE);
+      // Alter form for restricted features.
+      if ($restricted) {
+        $name = $feature->name;
+        $action = t(variable_get($var .'_action', 'Not Available'));
+        $url = variable_get($var .'_url', NULL);
+        $package_title = $feature->info['package'];
+        $package = strtolower(preg_replace('/[^a-zA-Z0-9-]+/', '-', $package_title));
+        $form[$package]['status'][$name]['#access'] = FALSE; 
+        $form[$package]['actions'][$name]['#value'] = '<a href="'. $url .'" class="admin-update" target="_blank">'. $action .'</a>'; 
+      }
+    }
   }
 }
