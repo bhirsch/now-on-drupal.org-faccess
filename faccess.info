@@ -1,0 +1,6 @@
+; $Id $
+name = Feature Access
+description = Control end user access to feature modules. (Hide/expose features on admin/build/features screen.)
+core = 6.x
+version = "6.x-1.0"
+project = "SaaS"
