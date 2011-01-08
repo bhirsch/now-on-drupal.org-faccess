@@ -25,9 +25,6 @@ function faccess_menu() {
   return $items;
 }
 
-// TODO Handle feature sets like this. paccess module (p for packages).
-//unset($form['agenda']);
-
 /**
  * Implementation of hook_form_alter().
  */
