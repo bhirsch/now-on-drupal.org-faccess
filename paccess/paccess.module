@@ -13,8 +13,8 @@ function paccess_menu() {
   $items = array();
 
   $items['admin/settings/paccess'] = array(
-    'title' => t('Extra Features'), 
-    'description' => t('Show/Hide features to users without "administer features" permissions'),
+    'title' => t('Package Access (Feature Sets)'), 
+    'description' => t('Show/Hide features to users with "administer features" permissions'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('paccess_admin_settings'),
     'access arguments' => array('administer feature access'), 
@@ -29,6 +29,46 @@ function paccess_menu() {
  * Implementation of hook_form_alter().
  */
 function paccess_form_alter(&$form, $form_state, $form_id) {
-// TODO Handle feature sets like this. paccess module (p for packages).
-//unset($form['agenda']);
+  if ($form_id == 'features_admin_form') {
+    // Figure out which packages (feature sets) have restricted access. 
+    $features = features_get_features();
+    foreach($features as $feature) {
+      $package_title = $feature->info['package'];
+      $package = strtolower(preg_replace('/[^a-zA-Z0-9-]+/', '-', $package_title));
+      $var = 'paccess_'. $package;
+      $restricted = variable_get($var, FALSE);
+      // Alter form for restricted features.
+      if ($restricted) {
+        unset($form[$package]);
+      }
+    }
+  }
+}
+
+/**
+ * Programatically deny access to feature set(s).
+ * This will hide the feature set entirely from the end user.
+ *
+ * @param
+ *  $package_title, string, "Feature Module's Package"
+ */
+function paccess_deny($package_title) {
+  $package = strtolower(preg_replace('/[^a-zA-Z0-9-]+/', '-', $package_title));
+  $var = "paccess_". $package;
+  dsm($var);
+  variable_set($var, TRUE); // True denies access to this feature set: deny access = true. 
+}
+
+/**
+ * Programatically grant access to feature set(s).
+ * This will expose the feature set to the end user.
+ *
+ * @param
+ *  $package_title, string, "Feature Module's Package"
+ */
+function paccess_grant($package_title) {
+  $package = strtolower(preg_replace('/[^a-zA-Z0-9-]+/', '-', $package_title));
+  $var = "paccess_". $package;
+  dsm($var);
+  variable_set($var, FALSE); // True denies access to this feature set: deny access = true. 
 }

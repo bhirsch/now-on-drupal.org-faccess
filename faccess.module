@@ -13,7 +13,7 @@ function faccess_menu() {
   $items = array();
 
   $items['admin/settings/faccess'] = array(
-    'title' => t('Extra Features'), 
+    'title' => t('Feature Access'), 
     'description' => t('Show/Hide features to users without "administer features" permissions'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('faccess_admin_settings'),
@@ -54,4 +54,42 @@ function faccess_form_alter(&$form, $form_state, $form_id) {
       }
     }
   }
+}
+
+/**
+ * Programatically deny access to feature module.
+ *  
+ * @param
+ *  $params, array('module' => 'mymodule', 
+ *                 'action' => 'text for action link', 
+ *                 'url' => 'http://example.com');
+ */
+function faccess_deny($params) {
+  // Set $element variable, faccess_mymodule.
+  $element = "faccess_". $params['module'];
+  variable_set($element, TRUE); // true -> deny access.
+  // Set $action variable, faccess_mymodule_action.
+  $action =  $element ."_action";
+  variable_set($action, $params['action']);
+  // Set $url variable, faccess_mymodule_url.
+  $url = $element ."_url";
+  variable_set($url, $params['url']);
+}
+
+/**
+ * Programatically grant access to feature module.
+ *  
+ * @param
+ *  $module, string, mymodule.
+ */
+function faccess_grant($module) {
+  // Set $element variable, faccess_mymodule.
+  $element = "faccess_". $module;
+  variable_set($element, FALSE); // deny access = false
+  // Set $action variable, faccess_mymodule_action.
+  $action =  $element ."_action";
+  variable_set($action, NULL); 
+  // Set $url variable, faccess_mymodule_url.
+  $url = $element ."_url";
+  variable_set($url, NULL); 
 }
