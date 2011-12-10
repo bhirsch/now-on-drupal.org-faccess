@@ -50,8 +50,8 @@ function faccess_admin_settings() {
                              // x module and strong arm this way.
       '#title' => t($title),
       '#default_value' => variable_get($element, FALSE),
-      '#description' => t('Checked features will be hidden '
-        .'from users on !features.', 
+      '#description' => t('Check here to prevent users from enabling (or disabling) this module '
+        .'on !features.', 
         array('!features' => l('admin/build/features', 'admin/build/features'))),
     ); 
     $form[$package][$group][$action] = array(
